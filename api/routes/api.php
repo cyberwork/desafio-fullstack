@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ContractController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*

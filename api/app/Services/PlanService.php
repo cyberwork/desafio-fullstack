@@ -26,15 +26,14 @@ class PlanService
             $activeContract->update(['active' => false]);
         }
 
-        // Create new contract
         $contract = Contract::create([
             'user_id' => $user->id,
             'plan_id' => $plan->id,
             'start_date' => $startDate,
+            'end_date' => Carbon::now()->addMonth(),
             'active' => true,
         ]);
 
-        // Create initial payment
         Payment::create([
             'contract_id' => $contract->id,
             'amount' => $plan->price,
@@ -72,6 +71,7 @@ class PlanService
             'user_id' => $user->id,
             'plan_id' => $newPlan->id,
             'start_date' => $switchDate,
+            'end_date' => Carbon::now()->addMonth(),
             'active' => true,
         ]);
 

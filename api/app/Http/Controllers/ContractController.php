@@ -49,13 +49,12 @@ class ContractController extends Controller
     {
         $validated = $request->validate([
             'plan_id' => 'required|exists:plans,id',
-            'start_date' => 'required|date',
         ]);
 
         // Get the authenticated user (in this case, we'll use the first user)
         $user = User::first();
         $plan = Plan::findOrFail($validated['plan_id']);
-        $startDate = Carbon::parse($validated['start_date']);
+        $startDate = Carbon::now();
 
         $contract = $this->planService->subscribeToPlan($user, $plan, $startDate);
 
