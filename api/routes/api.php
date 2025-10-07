@@ -26,3 +26,11 @@ Route::get('/', function () {
 Route::apiResource('plans', PlanController::class, ['only' => 'index']);
 
 Route::apiSingleton('user', UserController::class, ['only' => 'show']);
+
+Route::apiResource('contracts', ContractController::class);
+Route::get('/contracts/active', [ContractController::class, 'active']);
+Route::post('/contracts/switch-plan', [ContractController::class, 'switchPlan']);
+
+Route::apiResource('payments', PaymentController::class);
+Route::get('/payments/contract/{contract}', [PaymentController::class, 'forContract']);
+Route::post('/payments/{payment}/process', [PaymentController::class, 'processPayment']);
