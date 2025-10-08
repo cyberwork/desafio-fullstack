@@ -6,6 +6,7 @@ use App\Models\Contract;
 use App\Models\User;
 use App\Models\Plan;
 use App\Services\PlanService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -21,11 +22,12 @@ class ContractController extends Controller
     /**
      * Display a listing of the contracts.
      *
-     * @return \Illuminate\Http\Response
+     * @return Builder[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Http\Response
      */
     public function index()
     {
-        return Contract::with(['user', 'plan'])->get();
+        $user = User::first();
+        return $user->contracts()->with(['plan'])->orderBy('created_at', 'desc')->get();
     }
 
     /**
