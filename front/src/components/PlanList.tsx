@@ -14,7 +14,7 @@ export const PlanList = () => {
     try {
       const plansData = await getPlans()
       setPlans(plansData)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao buscar planos:', error)
     } finally {
       setLoading(false)
@@ -61,30 +61,32 @@ export const PlanList = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {plans.map((plan) => (
-            <div key={plan.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg font-semibold mb-2">{plan.description} {plan.id != activeContract?.plan_id ? '' : '(PLANO ATUAL)'}</h3>
-              <div className="mb-2">
-                <span className="text-gray-700 font-bold">Clientes:</span>
-                <span className="text-gray-800 ml-2">{plan.numberOfClients}</span>
+              <div key={plan.id} className="border border-gray-200 rounded-lg pt-5 pb-5 hover:shadow-lg transition-shadow">
+                  <div className="bg-orange-500 text-white text-left pl-5 py-2 mr-10 font-bold mb-5">
+                      {plan.description} {plan.id != activeContract?.plan_id ? '' : '(PLANO ATUAL)'}
+                  </div>
+                  <div className="mb-2 pl-5">
+                      <span className="text-gray-700 font-bold">Clientes:</span>
+                      <span className="text-gray-800 ml-2">{plan.numberOfClients}</span>
+                  </div>
+                  <div className="mb-2 pl-5">
+                      <span className="text-gray-700 font-bold">Armazenamento:</span>
+                      <span className="text-gray-800 ml-2">{plan.gigabytesStorage} GB</span>
+                  </div>
+                  <div className="mb-4 pl-5">
+                      <span className="text-gray-700 font-bold">Preço:</span>
+                      <span className="text-gray-800 ml-2">R$ {plan.price}</span>
+                  </div>
+                  <button
+                      onClick={() => handleSelectPlan(plan)}
+                      className="bg-blue-500 hover:bg-blue-700 text-white text-center font-bold py-2 px-4 ml-5 rounded"
+                  >
+                      {activeContract?.plan_id ?
+                          (plan.id != activeContract.plan_id ? 'Trocar Plano' : 'Assinar Plano')
+                          : 'Assinar Plano'
+                      }
+                  </button>
               </div>
-              <div className="mb-2">
-                <span className="text-gray-700 font-bold">Armazenamento:</span>
-                <span className="text-gray-800 ml-2">{plan.gigabytesStorage} GB</span>
-              </div>
-              <div className="mb-4">
-                <span className="text-gray-700 font-bold">Preço:</span>
-                <span className="text-gray-800 ml-2">R$ {plan.price}</span>
-              </div>
-              <button
-                onClick={() => handleSelectPlan(plan)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                  {activeContract?.plan_id ?
-                      (plan.id != activeContract.plan_id ? 'Trocar Plano' : 'Assinar Plano')
-                      : 'Assinar Plano'
-                  }
-              </button>
-            </div>
           ))}
         </div>
       )}

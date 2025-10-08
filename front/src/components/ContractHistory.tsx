@@ -32,7 +32,7 @@ const ContractHistory: React.FC = () => {
     }
 
     return (
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-white shadow-md rounded-lg p-6 mb-10">
             <h2 className="text-xl font-bold text-gray-800 mb-4">Histórico de Planos</h2>
 
             {contracts.length === 0 ? (
