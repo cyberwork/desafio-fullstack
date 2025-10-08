@@ -68,16 +68,16 @@ class ContractController extends Controller
      * @param  \App\Models\Contract  $contract
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Contract $contract)
-    {
-        $validated = $request->validate([
-            'plan_id' => 'required|exists:plans,id',
-        ]);
-
-        $contract->update($validated);
-
-        return response()->json($contract->load(['user', 'plan']));
-    }
+//    public function update(Request $request, Contract $contract)
+//    {
+//        $validated = $request->validate([
+//            'plan_id' => 'required|exists:plans,id',
+//        ]);
+//
+//        $contract->update($validated);
+//
+//        return response()->json($contract->load(['user', 'plan']));
+//    }
 
     /**
      * Remove the specified resource from storage.

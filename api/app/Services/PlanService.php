@@ -21,7 +21,7 @@ class PlanService
     public function subscribeToPlan(User $user, Plan $plan, Carbon $startDate)
     {
         // Deactivate any existing active contract
-        $activeContract = $user->activeContract;
+        $activeContract = $user->activeContract();
         if ($activeContract) {
             $activeContract->update(['active' => false]);
         }
@@ -38,7 +38,7 @@ class PlanService
             'contract_id' => $contract->id,
             'amount' => $plan->price,
             'due_date' => $startDate,
-            'paid' => false,
+            'paid' => true,
         ]);
 
         return $contract;
@@ -54,7 +54,7 @@ class PlanService
      */
     public function switchPlan(User $user, Plan $newPlan, Carbon $switchDate)
     {
-        $currentContract = $user->activeContract;
+        $currentContract = $user->activeContract();
 
         if (!$currentContract) {
             throw new \Exception('No active contract found');
@@ -66,23 +66,37 @@ class PlanService
         // Deactivate current contract
         $currentContract->update(['active' => false]);
 
+        // Determine the end date based on credit
+        $endDate = Carbon::now()->addMonth();
+
+        // If switching to a cheaper plan, add extra days based on the credit
+        $currentPlan = $currentContract->plan;
+        if ($newPlan->price < $currentPlan->price && $credit > 0) {
+            // Calculate how many days of credit to add based on the difference in plan prices
+            $dailyRate = $newPlan->price / 30; // Assuming 30 days per month
+            $extraDays = (int)($credit / $dailyRate);
+            $endDate = $endDate->addDays($extraDays);
+        }
+
         // Create new contract
         $newContract = Contract::create([
             'user_id' => $user->id,
             'plan_id' => $newPlan->id,
             'start_date' => $switchDate,
-            'end_date' => Carbon::now()->addMonth(),
+            'end_date' => $endDate,
             'active' => true,
         ]);
 
         // Create payment for new contract with adjusted amount
-        $adjustedAmount = max(0, $newPlan->price - $credit);
-        Payment::create([
-            'contract_id' => $newContract->id,
-            'amount' => $adjustedAmount,
-            'due_date' => $switchDate,
-            'paid' => $adjustedAmount == 0, // If no amount is due, mark as paid
-        ]);
+        if ($newPlan->price > $currentPlan->price) {
+            $adjustedAmount = max(0, $newPlan->price - $credit);
+            Payment::create([
+                'contract_id' => $newContract->id,
+                'amount' => $adjustedAmount,
+                'due_date' => $switchDate,
+                'paid' => true, // If no amount is due, mark as paid
+            ]);
+        }
 
         return $newContract;
     }
