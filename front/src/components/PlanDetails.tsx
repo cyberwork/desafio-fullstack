@@ -1,30 +1,26 @@
 import { useState } from 'react'
-import { Plan } from '../types'
-import { subscribeToPlan } from '../services/contractService'
+import { Plan, Contract } from '../types'
+import { subscribeToPlan, switchPlan } from '../services/contractService'
 
 interface PlanDetailsProps {
   plan: Plan
+  contract: Contract|null
   onSubscribe: () => void
 }
 
-export const PlanDetails = ({ plan, onSubscribe }: PlanDetailsProps) => {
-  const [startDate, setStartDate] = useState('')
+export const PlanDetails = ({ plan, contract, onSubscribe }: PlanDetailsProps) => {
   const [subscribing, setSubscribing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
   const handleSubscribe = async () => {
-    if (!startDate) {
-      setError('Por favor, selecione uma data de início.')
-      return
-    }
 
     setSubscribing(true)
     setError(null)
     setSuccess(false)
 
     try {
-      await subscribeToPlan(plan.id, startDate)
+      await subscribeToPlan(plan.id)
       setSuccess(true)
       onSubscribe()
     } catch (error: any) {
@@ -33,6 +29,22 @@ export const PlanDetails = ({ plan, onSubscribe }: PlanDetailsProps) => {
       setSubscribing(false)
     }
   }
+    const handleSwitch = async () => {
+
+        setSubscribing(true)
+        setError(null)
+        setSuccess(false)
+
+        try {
+            await switchPlan(plan.id)
+            setSuccess(true)
+            onSubscribe()
+        } catch (error: any) {
+            setError(error.response?.data?.error || 'Erro ao assinar plano.')
+        } finally {
+            setSubscribing(false)
+        }
+    }
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -65,24 +77,17 @@ export const PlanDetails = ({ plan, onSubscribe }: PlanDetailsProps) => {
           <p className="text-gray-800">R$ {plan.price}</p>
         </div>
       </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 font-bold mb-2">Data de Início:</label>
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-          disabled={subscribing}
-        />
-      </div>
       <button
-        onClick={handleSubscribe}
-        disabled={subscribing || !startDate}
+        onClick={plan.id == contract?.plan_id ? handleSwitch : handleSubscribe}
+        disabled={subscribing}
         className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ${
-          subscribing || !startDate ? 'opacity-50 cursor-not-allowed' : ''
+          subscribing ? 'opacity-50 cursor-not-allowed' : ''
         }`}
       >
-        {subscribing ? 'Assinando...' : 'Assinar Plano'}
+          {contract?.plan_id ?
+                plan.id != contract.plan_id ? 'Trocar Plano' : 'Assinar Plano'
+                : 'Assinar Plano'
+          }
       </button>
     </div>
   )

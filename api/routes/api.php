@@ -29,7 +29,7 @@ Route::apiResource('plans', PlanController::class, ['only' => 'index']);
 
 Route::apiSingleton('user', UserController::class, ['only' => 'show']);
 
-Route::apiResource('contracts', ContractController::class);
+Route::apiResource('contracts', ContractController::class, ['except' => 'show']);
 Route::get('/contracts/active', [ContractController::class, 'active']);
 Route::post('/contracts/switch-plan', [ContractController::class, 'switchPlan']);
 

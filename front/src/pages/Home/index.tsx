@@ -1,5 +1,6 @@
 import { UserProfile } from '../../components/UserProfile'
 import { PlanList } from '../../components/PlanList'
+import ContractHistory from '../../components/ContractHistory'
 
 export const Home = () => {
     return (
@@ -8,6 +9,7 @@ export const Home = () => {
                 Desafio para Desenvolvedor - Inmediam
             </h1>
             <UserProfile />
+            <ContractHistory />
             <PlanList />
         </div>
     )

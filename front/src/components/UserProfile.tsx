@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { User } from '../types'
 import { getUser } from '../services/userService'
-import ContractHistory from './ContractHistory'
 
 export const UserProfile = () => {
     const [user, setUser] = useState<User | null>(null)
@@ -43,7 +42,7 @@ export const UserProfile = () => {
                     <p className="text-gray-800">{user.email}</p>
                 </div>
             </div>
-            <ContractHistory />
+
         </div>
     )
 }

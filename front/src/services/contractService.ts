@@ -15,10 +15,9 @@ export const getPlans = async (): Promise<Plan[]> => {
   return response.data
 }
 
-export const subscribeToPlan = async (planId: number, startDate: string): Promise<Contract> => {
+export const subscribeToPlan = async (planId: number): Promise<Contract> => {
   const response = await api.post('/contracts', {
-    plan_id: planId,
-    start_date: startDate
+    plan_id: planId
   })
   return response.data
 }

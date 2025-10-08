@@ -15,6 +15,6 @@ class User extends Model
 
     public function activeContract()
     {
-        return $this->contracts()->where('active', true)->first();
+        return $this->contracts()->where('active', '=', true);
     }
 }
